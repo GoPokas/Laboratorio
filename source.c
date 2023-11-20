@@ -71,17 +71,16 @@ int menu(int opcao){
 }
 
 // Função para inicializar o jogador
-void inicializarJogador(Jogador *jogador, Carta carta){
+void inicializarJogador(Jogador *jogador, Baralho *baralho){
     printf("Insira o nome do jogador: ");
     scanf("%s", jogador->nome);
     jogador->pontos = 0;
     
     for (int i = 0; i < 6; i++)
     {
-        if (jogador->mao[i].id == -1)
-        {
-            jogador->mao[i] = carta;    
-        }
+        // Atribuir as cartas ao jogador
+        jogador->mao[i].id = baralho->cartas[i].id;    
+        jogador->mao[i].tipo = baralho->cartas[i].tipo;
     }
 }
 
@@ -128,7 +127,7 @@ void inicializarBaralho(Baralho *baralho){
     }
     }
 
-// Função para imprimir o baralho
+// Função para imprimir o baralho (para testes)
 void imprimirBaralho(Baralho *baralho)
 {
     for (int i = 0; i < 81; i++)
@@ -161,8 +160,36 @@ void imprimirBaralho(Baralho *baralho)
 // Função para criar um novo jogo
 void novoJogo(){
     Baralho baralho;
+    Jogador jogador1, jogador2;
     inicializarBaralho(&baralho);
-    imprimirBaralho(&baralho);
+    inicializarJogador(&jogador1, &baralho);
+    printf("O jogador 1 é o %s\n", jogador1.nome);
+    printf("O jogador 1 tem as seguintes cartas: \n");
+    for (int i = 0; i < 6; i++)
+    {
+        printf("Carta %d: ", jogador1.mao[i].id);
+        switch (jogador1.mao[i].tipo)
+        {
+        case HARE:
+            printf("Lebre\n");
+            break;
+        case TURTLE:
+            printf("Tartaruga\n");
+            break;
+        case WOLF:
+            printf("Lobo\n");
+            break;
+        case WOLF_HOWL:
+            printf("Lobo_Uivar\n");
+            break;
+        case FOX:
+            printf("Raposa\n");
+            break;
+        case SHEEP:
+            printf("Ovelha\n");
+            break;
+        }
+    }
 }
 
 
