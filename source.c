@@ -1,4 +1,27 @@
 #include "lab.h"
+// Estrutura da pista
+
+typedef enum // Enum para definir o tipo de pista
+{
+    STARTING_BOX,
+    STRAIGHT_BOX,
+    RIVER_BOX,
+    FINISH_BOX,
+    PODIUM_BOX,
+} TipoPista;
+
+typedef struct 
+{
+    TipoPista tipo;
+    int id;
+} Peças;
+
+typedef struct 
+{
+    Peças peças[14];
+} Pista;
+
+
 //Estrutura do baralho
 typedef enum // Enum para definir o tipo de carta
 {
@@ -41,7 +64,7 @@ void ecraInicial(){
     gotoxy(90, 10);
     printf("Jogo da Lebra e da Tartaruga");
     gotoxy(90, 11);
-    printf("Rodrigo Alves");
+    printf("Guilherme Temporão");
     // Pausa para avançar para o menu
     gotoxy(90, 15);
     system("pause");
@@ -84,9 +107,48 @@ void inicializarJogador(Jogador *jogador, Baralho *baralho){
     }
 }
 
+// Função para inicializar e baralhar a pista
+void inicializarPista(Pista *pista){
+    // Inicializar a pista
+    for (int i = 0; i < 14; i++)
+    {
+        if (i < 1)    
+        {
+            pista->peças[i].tipo = STARTING_BOX;
+        }
+        else if (i < 10)
+        {
+            pista->peças[i].tipo = STRAIGHT_BOX;
+        }
+        else if (i < 12)
+        {
+            pista->peças[i].tipo = RIVER_BOX;
+        }
+        else if (i < 13)
+        {
+            pista->peças[i].tipo = FINISH_BOX;
+        }
+        else
+        {
+            pista->peças[i].tipo = PODIUM_BOX;
+        }
+        pista->peças[i].id = i;
+      } 
+    // Baralhar as peças
+    srand(time(NULL));
+    for (int i = 13; i > 0; i--)
+    {
+        int j = rand() % (i + 1);
+
+        Peças temp = pista->peças[i];
+        pista->peças[i] = pista->peças[j];
+        pista->peças[j] = temp;
+    }
+}
+
 // Função para inicializar e baralhar o baralho
 void inicializarBaralho(Baralho *baralho){
-        // Inicializar o baralho
+    // Inicializar o baralho
     for (int i = 0; i < 81; i++)
     {
         if (i < 18)
@@ -125,7 +187,34 @@ void inicializarBaralho(Baralho *baralho){
         baralho->cartas[i] = baralho->cartas[j];
         baralho->cartas[j] = temp;
     }
+}
+
+// Função para imprimir a pista (para testes)
+void imprimirPista(Pista *pista)
+{
+    for (int i = 0; i < 14; i++)
+    {
+        printf("A pista %d é um(a) ", pista->peças[i].id);
+        switch (pista->peças[i].tipo)
+        {
+        case STARTING_BOX:
+            printf("Caixa de inicio\n");
+            break;
+        case STRAIGHT_BOX:
+            printf("Caixa reta\n");
+            break;
+        case RIVER_BOX:
+            printf("Caixa de rio\n");
+            break;
+        case FINISH_BOX:
+            printf("Caixa de fim\n");
+            break;
+        case PODIUM_BOX:
+            printf("Caixa de pódio\n");
+            break;
+        }
     }
+}
 
 // Função para imprimir o baralho (para testes)
 void imprimirBaralho(Baralho *baralho)
@@ -159,43 +248,22 @@ void imprimirBaralho(Baralho *baralho)
 
 // Função para criar um novo jogo
 void novoJogo(){
+    Pista pista;
     Baralho baralho;
     Jogador jogador1, jogador2;
     inicializarBaralho(&baralho);
+    inicializarPista(&pista);
     inicializarJogador(&jogador1, &baralho);
-    printf("O jogador 1 é o %s\n", jogador1.nome);
-    printf("O jogador 1 tem as seguintes cartas: \n");
-    for (int i = 0; i < 6; i++)
-    {
-        printf("Carta %d: ", jogador1.mao[i].id);
-        switch (jogador1.mao[i].tipo)
-        {
-        case HARE:
-            printf("Lebre\n");
-            break;
-        case TURTLE:
-            printf("Tartaruga\n");
-            break;
-        case WOLF:
-            printf("Lobo\n");
-            break;
-        case WOLF_HOWL:
-            printf("Lobo_Uivar\n");
-            break;
-        case FOX:
-            printf("Raposa\n");
-            break;
-        case SHEEP:
-            printf("Ovelha\n");
-            break;
-        }
-    }
+    // inicializarJogador(&bot, &baralho);
+    
+
 }
 
 
 int main() {
     int opcao, loop = 1;
     Baralho baralho;
+    Pista pista;
     setlocale(LC_ALL, "pt_PT.UTF-8");
     setFullScreen(true);
     ecraInicial();
